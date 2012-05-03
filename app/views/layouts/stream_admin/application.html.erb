@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title><%= @PAGE_TITLE ? @PAGE_TITLE + " | StreamAdmin" : "StreamAdmin | Dashboard" %></title>
+  <%= stylesheet_link_tag    "application", :media => "all" %>
+  <%= stylesheet_link_tag    "stream_admin/application", :media => "all" %>
+  <%= javascript_include_tag "application", "stream_admin/application" %>
+  <%= csrf_meta_tags %>
+</head>
+<body>
+
+<div class="navbar">
+	<div class="navbar-inner">
+		<div class="container-fluid">
+		
+		<%= link_to "StreamAdmin", root_path, :class => "brand" %>
+		
+		</div>
+	</div>
+</div>
+
+<div id="content" class="container-fluid">
+			<% if @PAGE_TITLE %><h1><%= @PAGE_TITLE %></h1><% end %>
+			
+			<% if flash[:notice] %>
+				<div class="alert alert-success"><%= flash[:notice] %></div>
+			<% end %>
+			
+			<% if flash[:error] %>
+				<div class="alert alert-error"><%= flash[:error] %></div>				
+			<% end %>
+			
+			<%= yield %>
+	<br class="clear"/>
+	<br/>
+</div>
+
+</body>
+<script type="text/javascript">
+<%= yield :footerjss %>
+</script>
+
+</html>

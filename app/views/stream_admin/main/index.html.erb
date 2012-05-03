@@ -1,0 +1,9 @@
+<p>Cube server is at <%= Rails.application.config.streamadmin.cube_server %>.</p>
+
+<div id="cube_graphs">
+	
+</div>
+
+<% content_for :footerjss do %>
+	sc = new StreamCube({el:"#cube_graphs",server:"<%= Rails.application.config.streamadmin.cube_server %>"})
+<% end %>
