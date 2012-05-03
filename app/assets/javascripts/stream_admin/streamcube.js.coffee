@@ -36,10 +36,16 @@ window.StreamCube = class StreamCube
         @d3.append("div")
             .attr("class", "rule")
             .call(@context.rule())
+        
+        @all = @cube.metric("sum(stream_minutes(duration))").divide(60)
+        @yesterday = @all.shift(-1 * 24 * 60 * 60 * 1000)
+        @kpcc = @cube.metric("sum(stream_minutes(duration).re(ua,\"KPCC\"))").divide(60)
+
             
-        metrics = [
-            "sum(stream_minutes(duration))",
-            "sum(stream_minutes(duration).re(ua,\"KPCC\"))"
+        @metrics = [
+            @context.horizon().format( d3.format(".0f") ).height(150).metric( (d) => @all),
+            @context.comparison().primary(@all).secondary(@yesterday).height(50),
+            @context.horizon().format( d3.format(".0f") ).height(100).metric( (d) => @kpcc)
         ]
         
         i = 0
@@ -48,13 +54,13 @@ window.StreamCube = class StreamCube
             .attr("class", "group")
             .call( -> @append("header").text("Average Listeners") )
             .selectAll(".horizon")
-            .data(["All Listeners","KPCC App Listeners"])
+            .data(["All Listeners","Compared to Yesterday","KPCC App Listeners"])
             .enter().append("div")
             .attr("class","horizon")
-            .call(@context.horizon().format( d3.format(".0f") ).height(100).metric((d) => @cube.metric(metrics[i++]).divide(60)))
+            .call (sel) => sel.each (d,i) -> _this.metrics[i](d3.select(this))
             
         # On mousemove, reposition the chart values to match the rule.
         @context.on "focus", (i) => 
-            d3.selectAll(".value").style("right", if i == null then null else @context.size() - i + "px")
+            @d3.selectAll(".value").style("right", if i == null then null else @context.size() - i + "px")
                             
         #@d3.call(@horizon)
